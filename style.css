@@ -302,3 +302,32 @@ body {
   font-weight: 600;
   color: #333;
 }
+
+.perk-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 8px 0 12px;
+}
+
+.perk-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  padding: 12px;
+  background: #ffffff;
+}
+
+.perk-card strong {
+  font-size: 15px;
+  color: #e84118;
+}
+
+.perk-card span {
+  font-family: system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #111;
+  line-height: 1.3;
+}
