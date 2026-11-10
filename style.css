@@ -1,0 +1,268 @@
+/* ============================================================================
+   BITE OR BAIT - Style 1: American Comic & Bass Sticker Pop-Art Stylesheet
+   ============================================================================ */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+body {
+  background-color: #121824;
+  background-image: radial-gradient(#1f2a40 2px, transparent 2px);
+  background-size: 18px 18px;
+  color: #ffffff;
+  font-family: 'Impact', 'Arial Black', system-ui, -apple-system, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 12px;
+}
+
+.game-shell {
+  position: relative;
+  width: 960px;
+  max-width: 100%;
+  border: 6px solid #000000;
+  box-shadow: 12px 12px 0px #ffea00, 18px 18px 0px #000000;
+  background: #000000;
+}
+
+#gameCanvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #072448;
+}
+
+/* Top Utility Bar */
+.top-toolbar {
+  width: 960px;
+  max-width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.brand-badge {
+  background: #ffea00;
+  color: #000000;
+  border: 4px solid #000000;
+  padding: 4px 14px;
+  font-size: 20px;
+  letter-spacing: 1px;
+  box-shadow: 4px 4px 0px #e84118;
+  transform: rotate(-1deg);
+}
+
+.toolbar-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.comic-btn {
+  background: #ffea00;
+  color: #000000;
+  border: 4px solid #000000;
+  padding: 8px 16px;
+  font-family: 'Impact', 'Arial Black', sans-serif;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px #000000;
+  transition: transform 0.08s ease, background-color 0.1s;
+}
+
+.comic-btn:hover {
+  background: #ffffff;
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #000000;
+}
+
+.comic-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #000000;
+}
+
+.comic-btn.primary {
+  background: #ff3838;
+  color: #ffffff;
+  font-size: 24px;
+  padding: 12px 32px;
+}
+
+.comic-btn.primary:hover {
+  background: #ff5252;
+}
+
+.comic-btn.ad-btn {
+  background: #00ffcc;
+  color: #000000;
+  font-size: 20px;
+  padding: 12px 24px;
+}
+
+/* Overlays (Title Screen, Wave Clear, Game Over) */
+.comic-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 18, 38, 0.86);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 10;
+}
+
+.comic-overlay.hidden {
+  display: none;
+}
+
+.comic-panel-card {
+  background: #fff9e6;
+  color: #000000;
+  border: 6px solid #000000;
+  box-shadow: 12px 12px 0px #e84118, 16px 16px 0px #000000;
+  max-width: 720px;
+  width: 100%;
+  padding: 26px 32px;
+  text-align: center;
+}
+
+.comic-title {
+  font-size: 62px;
+  line-height: 0.95;
+  color: #ffea00;
+  -webkit-text-stroke: 3px #000000;
+  text-shadow: 6px 6px 0px #e84118, 10px 10px 0px #000000;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+
+.comic-subtitle {
+  display: inline-block;
+  background: #000000;
+  color: #00ffcc;
+  padding: 4px 14px;
+  font-size: 16px;
+  letter-spacing: 1.2px;
+  margin-bottom: 18px;
+}
+
+.how-to-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 14px 0 22px;
+  text-align: left;
+}
+
+.step-box {
+  background: #ffffff;
+  border: 3px solid #000000;
+  padding: 12px;
+  box-shadow: 4px 4px 0px #000000;
+}
+
+.step-box h3 {
+  font-size: 16px;
+  color: #e84118;
+  margin-bottom: 6px;
+}
+
+.step-box p {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.35;
+  color: #111;
+}
+
+.kbd-tag {
+  display: inline-block;
+  background: #ffea00;
+  border: 2px solid #000;
+  padding: 1px 6px;
+  font-family: 'Impact', sans-serif;
+  font-size: 12px;
+}
+
+/* Bottom MacBook Keyboard Controls Bar */
+.controls-footer {
+  width: 960px;
+  max-width: 100%;
+  margin-top: 10px;
+  background: #ffea00;
+  color: #000000;
+  border: 4px solid #000000;
+  padding: 8px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  box-shadow: 6px 6px 0px #000000;
+}
+
+.controls-footer span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Lure & Prey Dex Modal */
+.dex-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  max-height: 340px;
+  overflow-y: auto;
+  margin: 14px 0 18px;
+  text-align: left;
+  padding-right: 6px;
+}
+
+.dex-card {
+  border: 3px solid #000;
+  padding: 10px 12px;
+  background: #fff;
+  box-shadow: 4px 4px 0px #000;
+}
+
+.dex-card.lure-card {
+  border-left: 8px solid #ff3838;
+}
+
+.dex-card.prey-card {
+  border-left: 8px solid #2ecc71;
+}
+
+.dex-badge {
+  font-size: 11px;
+  color: #555;
+  margin-bottom: 3px;
+}
+
+.dex-card h4 {
+  font-size: 16px;
+  color: #000;
+  margin-bottom: 4px;
+}
+
+.dex-tell {
+  font-size: 12px;
+  color: #d63031;
+  margin-bottom: 4px;
+}
+
+.dex-desc {
+  font-family: system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+}

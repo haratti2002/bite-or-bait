@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BITE OR BAIT — The Smart Bass Survival Game</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Top Utility Bar -->
+  <header class="top-toolbar">
+    <div class="brand-badge">🐟 BITE OR BAIT • COMIC ARCADE EDITION</div>
+    <div class="toolbar-buttons">
+      <button id="btnOpenDex" class="comic-btn">📖 LURE & PREY DEX</button>
+      <button id="btnMute" class="comic-btn">🔊 SOUND: ON</button>
+    </div>
+  </header>
+
+  <!-- Main Game Stage -->
+  <main class="game-shell">
+    <canvas id="gameCanvas" width="960" height="600"></canvas>
+
+    <!-- 1. TITLE / START OVERLAY -->
+    <div id="menuOverlay" class="comic-overlay">
+      <div class="comic-panel-card">
+        <h1 class="comic-title">BITE OR BAIT</h1>
+        <div class="comic-subtitle">OUTSMART THE ANGLERS • EAT REAL PREY • TEASE THE LURES!</div>
+
+        <div class="how-to-grid">
+          <div class="step-box">
+            <h3>1. SWIM & SCAN</h3>
+            <p>
+              Use <span class="kbd-tag">↑↓←→</span> or <span class="kbd-tag">WASD</span> to orbit targets.
+              Swim <b>BELOW</b> frogs or press <span class="kbd-tag">Z</span> / <span class="kbd-tag">SHIFT</span> for <b>SONAR</b> to expose hidden hooks & heartbeats!
+            </p>
+          </div>
+          <div class="step-box">
+            <h3>2. STALK & TEASE!</h3>
+            <p>
+              Hold <span class="kbd-tag">SPACE</span> near a target to zoom in & inspect!
+              If it's a <b>FAKE LURE</b>, <b>RELEASE <span class="kbd-tag">SPACE</span></b> inches from the hook (or press <span class="kbd-tag">C</span>) to deal massive <b>TEASE RAGE</b>!
+            </p>
+          </div>
+          <div class="step-box">
+            <h3>3. BITE OR SPIT!</h3>
+            <p>
+              If it's <b>REAL PREY</b>, hold <span class="kbd-tag">SPACE</span> to 100% (or press <span class="kbd-tag">X</span>) to <b>CHOMP!</b>
+              Bit plastic by mistake? Slam <span class="kbd-tag">←</span> in 0.7s to <b>SPIT IT BACK!</b>
+            </p>
+          </div>
+        </div>
+
+        <button id="btnStartGame" class="comic-btn primary">⚡ PRESS [SPACE] OR CLICK TO DIVE IN! ⚡</button>
+      </div>
+    </div>
+
+    <!-- 2. WAVE CLEAR OVERLAY -->
+    <div id="waveOverlay" class="comic-overlay hidden">
+      <div class="comic-panel-card">
+        <h2 id="waveClearTitle" class="comic-title" style="font-size: 46px;">ANGLER DEFEATED!!</h2>
+        <p id="waveClearQuote" style="font-size: 20px; margin: 12px 0; color: #d63031;"></p>
+        <p id="waveClearStats" style="font-size: 18px; margin-bottom: 22px;"></p>
+        <button id="btnNextWave" class="comic-btn primary">🌊 NEXT RIVAL ANGLER [SPACE]</button>
+      </div>
+    </div>
+
+    <!-- 3. GAME OVER / VICTORY OVERLAY (WITH PORTAL AD-REVIVE DEMO) -->
+    <div id="gameOverOverlay" class="comic-overlay hidden">
+      <div class="comic-panel-card">
+        <h2 id="endTitle" class="comic-title" style="font-size: 42px;">GAME OVER</h2>
+        <p id="endStats" style="font-size: 18px; margin: 16px 0 24px;"></p>
+        <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+          <button id="btnAdRevive" class="comic-btn ad-btn">📺 WATCH AD: MIRACLE GILL-WASH REVIVE!</button>
+          <button id="btnRestart" class="comic-btn primary">🔄 PLAY AGAIN</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. LURE & PREY DEX MODAL -->
+    <div id="dexModal" class="comic-overlay hidden">
+      <div class="comic-panel-card">
+        <h2 class="comic-title" style="font-size: 40px;">LURE & PREY ENCYCLOPEDIA</h2>
+        <p style="font-family: system-ui, sans-serif; font-weight: 700; font-size: 14px;">
+          Inspect or bite targets in the lake to unlock their telltale secrets!
+        </p>
+        <div id="dexGrid" class="dex-grid"></div>
+        <button id="btnCloseDex" class="comic-btn primary" style="font-size: 18px; padding: 8px 24px;">CLOSE DEX</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- MacBook Keyboard Quick Reference Bar -->
+  <footer class="controls-footer">
+    <span><strong class="kbd-tag">↑ ↓ ← → / WASD</strong> Swim & Orbit Below</span>
+    <span><strong class="kbd-tag">HOLD SPACE</strong> Stalk & Inspect</span>
+    <span><strong class="kbd-tag">RELEASE SPACE / C</strong> Tease Lure!</span>
+    <span><strong class="kbd-tag">100% SPACE / X</strong> Bite Prey!</span>
+    <span><strong class="kbd-tag">Z / SHIFT</strong> Lateral Sonar</span>
+  </footer>
+
+  <script src="audio.js"></script>
+  <script src="entities.js"></script>
+  <script src="renderer.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
