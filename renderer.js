@@ -1103,29 +1103,47 @@ class ComicRenderer {
 
     ctx.save();
 
-    // If holding SPACE, draw comic speed lines & circular magnifying lens!
-    if (stalking) {
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
+    if (!stalking) {
+      // Sleek non-intrusive comic action prompt pill above target when nearby
+      const pillW = 248;
+      const pillH = 28;
+      const px = Math.max(16, Math.min(w - pillW - 16, item.x - pillW / 2));
+      const py = Math.max(162, item.y - 64);
+
+      ctx.fillStyle = '#ffea00';
+      ctx.strokeStyle = '#000000';
       ctx.lineWidth = 3;
-      for (let a = 0; a < Math.PI * 2; a += Math.PI / 12) {
-        const r1 = 230 + Math.sin(state.time * 16 + a * 4) * 18;
-        const r2 = Math.max(w, h);
-        ctx.beginPath();
-        ctx.moveTo(item.x + Math.cos(a) * r1, item.y + Math.sin(a) * r1);
-        ctx.lineTo(item.x + Math.cos(a) * r2, item.y + Math.sin(a) * r2);
-        ctx.stroke();
-      }
+      ctx.fillRect(px, py, pillW, pillH);
+      ctx.strokeRect(px, py, pillW, pillH);
+
+      ctx.fillStyle = '#000000';
+      ctx.font = 'bold 12px "Impact", "Arial Black", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('🔍 HOLD [SPACE]: ZOOM  |  [C] TEASE  |  [X] BITE', px + pillW / 2, py + 19);
+      ctx.restore();
+      return;
     }
 
-    // Position the Magnifying Loupe near the target without going off-screen
-    const loupeR = stalking ? 58 : 42;
-    const offsetX = item.x < w * 0.5 ? 115 : -115;
-    const lx = Math.max(90, Math.min(w - 90, item.x + offsetX));
-    const ly = Math.max(215, Math.min(h - 95, item.y - 35));
+    // Holding SPACE: Draw comic speed lines & circular 4x X-Ray Magnifying Lens!
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.lineWidth = 3;
+    for (let a = 0; a < Math.PI * 2; a += Math.PI / 12) {
+      const r1 = 220 + Math.sin(state.time * 16 + a * 4) * 18;
+      const r2 = Math.max(w, h);
+      ctx.beginPath();
+      ctx.moveTo(item.x + Math.cos(a) * r1, item.y + Math.sin(a) * r1);
+      ctx.lineTo(item.x + Math.cos(a) * r2, item.y + Math.sin(a) * r2);
+      ctx.stroke();
+    }
+
+    const loupeR = 62;
+    const offsetX = item.x < w * 0.5 ? 120 : -120;
+    const lx = Math.max(95, Math.min(w - 95, item.x + offsetX));
+    const ly = Math.max(225, Math.min(h - 95, item.y - 30));
 
     // Connector Line from Target to Loupe
     ctx.strokeStyle = '#ffea00';
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 3.5;
     ctx.beginPath();
     ctx.moveTo(item.x, item.y);
     ctx.lineTo(lx, ly);
@@ -1140,7 +1158,7 @@ class ComicRenderer {
     ctx.clip();
 
     // Grid lines inside lens
-    ctx.strokeStyle = 'rgba(0, 255, 204, 0.2)';
+    ctx.strokeStyle = 'rgba(0, 255, 204, 0.22)';
     ctx.lineWidth = 1;
     for (let gx = lx - loupeR; gx <= lx + loupeR; gx += 14) {
       ctx.beginPath();
@@ -1151,12 +1169,11 @@ class ComicRenderer {
 
     // Draw 1.75x Magnified Target inside Loupe!
     ctx.translate(lx, ly);
-    const zoom = stalking ? 1.65 : 1.25;
-    ctx.scale(zoom, zoom);
-    if (item.spec.isLure && (progress > 0.15 || state.sonarTimer > 0)) {
+    ctx.scale(1.75, 1.75);
+    if (item.spec.isLure) {
       this.drawDetailedHooks(ctx, item.spec, 1.0, true, state.time);
     }
-    this.drawEntityBody(ctx, item.spec, item.idNum, state.time, true, 0.9, true);
+    this.drawEntityBody(ctx, item.spec, item.idNum, state.time, true, 0.95, true);
     ctx.restore();
 
     // Outer Loupe Frame + Stalk Progress Ring!
@@ -1169,7 +1186,7 @@ class ComicRenderer {
     ctx.lineWidth = 3;
     ctx.stroke();
 
-    if (stalking && progress > 0) {
+    if (progress > 0) {
       ctx.beginPath();
       ctx.arc(lx, ly, loupeR + 6, -Math.PI / 2, -Math.PI / 2 + progress * Math.PI * 2);
       ctx.strokeStyle = progress > 0.72 ? '#ffea00' : '#00ffcc';
@@ -1178,8 +1195,8 @@ class ComicRenderer {
     }
 
     // Comic Clue Caption Tag attached to Loupe
-    const tagW = 290;
-    const tagH = stalking ? 60 : 34;
+    const tagW = 305;
+    const tagH = 58;
     const tx = Math.max(16, Math.min(w - tagW - 16, lx - tagW / 2));
     const ty = ly - loupeR - tagH - 12;
 
@@ -1189,22 +1206,15 @@ class ComicRenderer {
     ctx.fillRect(tx, ty, tagW, tagH);
     ctx.strokeRect(tx, ty, tagW, tagH);
 
+    ctx.fillStyle = item.spec.isLure ? '#d63031' : '#009432';
+    ctx.font = 'bold 13px "Impact", "Arial Black", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(item.spec.loupeBadge || item.spec.tellText, tx + tagW / 2, ty + 21);
+
     ctx.fillStyle = '#000000';
     ctx.font = 'bold 12px "Impact", "Arial Black", sans-serif';
-    ctx.textAlign = 'center';
-
-    if (!stalking) {
-      ctx.fillText('🔍 HOLD [SPACE] TO ZOOM & INSPECT!  ([C] TEASE / [X] BITE)', tx + tagW / 2, ty + 22);
-    } else {
-      ctx.fillStyle = item.spec.isLure ? '#d63031' : '#009432';
-      ctx.font = 'bold 13px "Impact", "Arial Black", sans-serif';
-      ctx.fillText(item.spec.loupeBadge || item.spec.tellText, tx + tagW / 2, ty + 21);
-
-      ctx.fillStyle = '#000000';
-      ctx.font = 'bold 12px "Impact", "Arial Black", sans-serif';
-      const mult = progress > 0.72 ? 'EXTREME x5' : progress > 0.45 ? 'SUPER x3' : 'x2';
-      ctx.fillText(`RELEASE [SPACE] = TEASE (${mult})  |  100% / [X] = BITE!`, tx + tagW / 2, ty + 46);
-    }
+    const mult = progress > 0.72 ? 'EXTREME x5' : progress > 0.45 ? 'SUPER x3' : 'x2';
+    ctx.fillText(`RELEASE [SPACE] = TEASE (${mult})  |  100% / [X] = BITE!`, tx + tagW / 2, ty + 45);
 
     ctx.restore();
   }
