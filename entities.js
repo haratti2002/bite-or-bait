@@ -11,11 +11,11 @@ window.ANGLERS = [
     hatColor: '#ff3b30',
     shirtColor: '#ffcc00',
     quotes: {
-      idle: ["C'mon fishy, fishy!", "Mom said I can stay 'til dinner!", "This worm looks super real!"],
-      teased: ["HEY!! IT JUST LOOKED AT IT!", "WHAT?! IT SMILED AT ME!!", "SO CLOSE!! BITE IT ALREADY!"],
-      spit: ["EW!! IT SPAT MY LURE AT MY FACE!", "MY BOBBER!!"],
-      hooked: ["I GOT ONE!! MOM, GET THE CAMERA!!"],
-      defeated: ["WAAAH!! STUPID SMART FISH! I'M GOING HOME!"]
+      idle: ["I saved up my allowance for this KSK BAITS worm!", "C'mon fishy, KSK BAITS always works!", "Look how real this KSK lure moves!"],
+      teased: ["HEY!! IT JUST LOOKED AT MY KSK BAIT!", "WHAT?! IT SMILED AT ME!!", "SO CLOSE!! BITE IT ALREADY!"],
+      spit: ["EW!! IT SPAT MY LURE AT MY FACE!", "MY KSK BAIT!!"],
+      hooked: ["I GOT ONE!! KSK BAITS RULES!!"],
+      defeated: ["WAAAH!! THIS BASS IS TOO SMART! I'M GOING HOME!"]
     }
   },
   {
@@ -26,26 +26,26 @@ window.ANGLERS = [
     hatColor: '#2ecc71',
     shirtColor: '#2980b9',
     quotes: {
-      idle: ["Paid $28.99 for this Japanese crankbait...", "Fish finder says there's a monster down there!", "Nobody outsmarts Ol' Hank!"],
-      teased: ["ARE YOU KIDDING ME?!", "IT STOPPED 1 INCH FROM THE HOOK!!", "MY BLOOD PRESSURE CAN'T TAKE THIS!"],
-      spit: ["MY $30 LURE!! RIGHT IN MY COFFEE!!", "HOW DID IT KNOW IT WAS PLASTIC?!"],
-      hooked: ["FISH ON!! GET THE NET!!"],
-      defeated: ["THAT'S IT! I'M SELLING THE BOAT!!"]
+      idle: ["Got a full tacklebox of KSK BAITS today...", "Fish finder says there's a Lunker down there!", "No bass can resist a KSK BAITS Topwater Frog!"],
+      teased: ["ARE YOU KIDDING ME?!", "IT STOPPED 1 INCH FROM MY KSK CRANKBAIT!!", "MY BLOOD PRESSURE CAN'T TAKE THIS!"],
+      spit: ["MY LIMITED-EDITION KSK LURE!! RIGHT IN MY COFFEE!!", "HOW DID IT KNOW IT WAS A LURE?!"],
+      hooked: ["FISH ON!! KSK BAITS DOES IT AGAIN!!"],
+      defeated: ["THAT'S IT! EVEN KSK BAITS COULDN'T FOOL THIS GENIUS BASS!"]
     }
   },
   {
     id: 'rex',
     name: 'REX "APEX" VANCE',
-    title: 'WAVE 3: WORLD BASS PRO CHAMPION',
+    title: 'WAVE 3: KSK BAITS PRO STAFF CHAMP',
     sanityMax: 180,
     hatColor: '#111111',
     shirtColor: '#e74c3c',
     quotes: {
-      idle: ["$100,000 trophy is on the line...", "Invisible fluorocarbon. Hand-painted swimbait.", "Show yourself, Lunker!"],
-      teased: ["IMPOSSIBLE! THAT'S A $120 CUSTOM BAIT!", "THIS BASS HAS A PHD!!", "SPONSORS ARE WATCHING! STOP TEASING ME!"],
-      spit: ["IT UNHOOKED ITSELF MID-BITE?!", "MY CUSTOM SWIMBAIT IS RUINED!"],
-      hooked: ["GIANT BASS ON!! TOURNAMENT WINNER!!"],
-      defeated: ["I QUIT PRO FISHING! THIS BASS IS A GENIUS!"]
+      idle: ["Throwing the flagship KSK BAITS Custom Glide...", "Invisible fluorocarbon + KSK BAITS craftsmanship.", "Show yourself, Lunker!"],
+      teased: ["IMPOSSIBLE! THAT'S A KSK BAITS PRO SWIMBAIT!", "THIS BASS HAS A PHD!!", "SPONSORS ARE WATCHING! STOP TEASING ME!"],
+      spit: ["IT UNHOOKED MY KSK SWIMBAIT MID-BITE?!", "UNBELIEVABLE REFLEXES!"],
+      hooked: ["GIANT BASS ON THE KSK GLIDE BAIT!!"],
+      defeated: ["RESPECT! YOU SURVIVED THE ENTIRE KSK BAITS LINEUP!"]
     }
   }
 ];
@@ -143,8 +143,8 @@ window.ITEM_CATALOG = [
   // ======================== FAKE LURES (TEASE THEM!) ========================
   {
     id: 'neon_worm_rig',
-    name: 'TEXAS-RIG PLASTIC WORM',
-    category: 'FAKE LURE',
+    name: 'KSK BAITS TEXAS-RIG WORM',
+    category: 'KSK BAITS LURE',
     isLure: true,
     minWave: 1,
     shape: 'worm',
@@ -157,13 +157,13 @@ window.ITEM_CATALOG = [
     lineVisibility: 0.75,
     hasRattle: false,
     tellText: 'DANGER!! CURVED HOOK IN BELLY + LEAD SINKER!',
-    clueSummary: 'Unnatural neon color, brass bullet weight on the nose, sharp hook point sticking out.',
-    priceTag: '$6.99 SOFT PLASTIC PACK'
+    clueSummary: 'KSK BAITS high-action soft worm! Look for the brass bullet weight & sharp offset hook.',
+    priceTag: 'KSK BAITS • SOFT SERIES'
   },
   {
     id: 'red_crankbait',
-    name: 'RATTLE-TRAP CRANKBAIT',
-    category: 'FAKE LURE',
+    name: 'KSK BAITS RATTLE-CRANK',
+    category: 'KSK BAITS LURE',
     isLure: true,
     minWave: 1,
     shape: 'crankbait',
@@ -176,13 +176,13 @@ window.ITEM_CATALOG = [
     lineVisibility: 0.65,
     hasRattle: true,
     tellText: 'CLICK-CLACK RATTLE!! PLASTIC LIP + TWO TREBLE HOOKS!',
-    clueSummary: 'Emits loud metallic CLICK-CLACK rattles, clear plastic diving bill in front, hanging treble hooks.',
-    priceTag: '$18.50 HARD CRANKBAIT'
+    clueSummary: 'Emits loud metallic CLICK-CLACK rattles, clear diving bill in front, dual treble hooks.',
+    priceTag: 'KSK BAITS • HARD SERIES'
   },
   {
     id: 'hollow_frog',
-    name: 'HOLLOW-BODY TOPWATER FROG',
-    category: 'FAKE LURE',
+    name: 'KSK BAITS HOLLOW TOPWATER FROG',
+    category: 'KSK BAITS LURE',
     isLure: true,
     minWave: 2,
     shape: 'frog',
@@ -195,13 +195,13 @@ window.ITEM_CATALOG = [
     lineVisibility: 0.4,
     hasRattle: false,
     tellText: 'LOOK UNDERNEATH!! TWIN BARBED HOOKS ON THE BELLY!',
-    clueSummary: 'Looks real from above! Swim BELOW it (↓) or use Sonar to spot the twin hooks & rubber tassel legs.',
-    priceTag: '$24.99 TOURNAMENT FROG'
+    clueSummary: 'Looks real from above! Swim BELOW it (↓) or use Sonar to spot the twin hooks & skirt legs.',
+    priceTag: 'KSK BAITS • TOPWATER'
   },
   {
     id: 'jig_craw',
-    name: 'SKIRTED BASS JIG & CRAW',
-    category: 'FAKE LURE',
+    name: 'KSK BAITS PRO TUNGSTEN JIG',
+    category: 'KSK BAITS LURE',
     isLure: true,
     minWave: 2,
     shape: 'craw',
@@ -214,13 +214,13 @@ window.ITEM_CATALOG = [
     lineVisibility: 0.45,
     hasRattle: true,
     tellText: 'SILICONE SKIRT + HEAVY METAL JIG HEAD!',
-    clueSummary: 'Hops vertically on a tight string; heavy painted lead head and sharp upward hook.',
-    priceTag: '$19.99 PRO TUNGSTEN JIG'
+    clueSummary: 'Hops vertically on a tight string; heavy painted head and sharp upward hook.',
+    priceTag: 'KSK BAITS • JIG SERIES'
   },
   {
     id: 'glide_swimbait',
-    name: 'CUSTOM JOINTED SWIMBAIT',
-    category: 'FAKE LURE',
+    name: 'KSK BAITS CUSTOM GLIDE SWIMBAIT',
+    category: 'KSK BAITS FLAGSHIP',
     isLure: true,
     minWave: 3,
     shape: 'bluegill',
@@ -232,8 +232,8 @@ window.ITEM_CATALOG = [
     hookPosition: 'hidden_belly',
     lineVisibility: 0.22,
     hasRattle: true,
-    tellText: 'HINGE SEAM IN BODY + DEAD GLASS EYES + TREBLE HOOKS!',
-    clueSummary: 'Ultra-realistic paint, but Stalk close or use Sonar to expose the mechanical hinge seam & belly hooks!',
-    priceTag: '$120.00 CUSTOM GLIDE BAIT'
+    tellText: 'HINGE SEAM IN BODY + GLASS EYES + TREBLE HOOKS!',
+    clueSummary: 'Flagship KSK BAITS masterpiece! Stalk close or use Sonar to expose the joint seam & hooks!',
+    priceTag: 'KSK BAITS • CUSTOM PRO'
   }
 ];

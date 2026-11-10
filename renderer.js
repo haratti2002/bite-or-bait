@@ -7,6 +7,8 @@ class ComicRenderer {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     this.halftonePattern = this.createHalftonePattern();
+    this.kskLogo = new Image();
+    this.kskLogo.src = 'ksk-baits-logo.png';
     this.sunbeams = [
       { x: 0.22, width: 110, angle: 0.18 },
       { x: 0.55, width: 140, angle: 0.14 },
@@ -1068,13 +1070,27 @@ class ComicRenderer {
     // Angler Sanity (Mental HP) Bar
     ctx.font = 'bold 12px "Impact", "Arial Black", sans-serif';
     ctx.fillText('ANGLER PATIENCE:', panelX + 110, 54);
-    const barW = Math.min(280, panelW - 230);
+    const barW = Math.min(250, panelW - 315);
     ctx.fillStyle = '#222';
     ctx.fillRect(panelX + 215, 41, barW, 16);
     const sanityRatio = Math.max(0, state.anglerSanity / angler.sanityMax);
     ctx.fillStyle = sanityRatio < 0.35 ? '#e84118' : '#ff9f43';
     ctx.fillRect(panelX + 215, 41, barW * sanityRatio, 16);
     ctx.strokeRect(panelX + 215, 41, barW, 16);
+
+    // Official KSK BAITS Logo Badge in top-right of Angler Panel
+    if (this.kskLogo && this.kskLogo.complete && this.kskLogo.naturalWidth > 0) {
+      const logoBoxW = 86;
+      const logoBoxH = 42;
+      const logoBoxX = panelX + panelW - logoBoxW - 10;
+      const logoBoxY = 18;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(logoBoxX, logoBoxY, logoBoxW, logoBoxH);
+      ctx.lineWidth = 2.5;
+      ctx.strokeRect(logoBoxX, logoBoxY, logoBoxW, logoBoxH);
+      ctx.drawImage(this.kskLogo, logoBoxX + 6, logoBoxY + 4, logoBoxW - 12, logoBoxH - 8);
+      ctx.lineWidth = 4;
+    }
 
     // Comic Speech Bubble from the Angler!
     const bubbleX = panelX + 110;
