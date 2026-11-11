@@ -1,0 +1,8 @@
+{
+  "name": "bite-or-bait",
+  "compatibility_date": "2025-01-01",
+  "workers_dev": true,
+  "assets": {
+    "directory": "."
+  }
+}
