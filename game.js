@@ -74,13 +74,120 @@ class BiteOrBaitGame {
       perks: this.perks
     };
 
+    // Touch / mouse "swim-to" target (canvas coordinates)
+    this.pointer = { active: false, x: 0, y: 0, id: null };
+    this.paused = false;
+    this.adPlaying = false;
+    this.gamesPlayed = 0;
+
+    // CrazyGames SDK state
+    this.sdk = null;
+    this.sdkEnv = 'none'; // 'crazygames' | 'local' | 'disabled' | 'none'
+    this.sdkGameplayActive = false;
+
     this.initBubbles();
     this.bindEvents();
+    this.bindPointerControls();
+    this.bindArcadeDeck();
     this.resize();
     this.updateOverlayUI();
+    this.initCrazyGamesSDK();
 
     this.lastFrameTime = performance.now();
     requestAnimationFrame((t) => this.loop(t));
+  }
+
+  // ==========================================================================
+  // CRAZYGAMES SDK v3 INTEGRATION (Rewarded + Midgame Ads, Gameplay Events)
+  // Safe no-op fallbacks when running on Cloudflare / localhost / offline.
+  // ==========================================================================
+  async initCrazyGamesSDK() {
+    try {
+      if (!window.CrazyGames || !window.CrazyGames.SDK) return;
+      await window.CrazyGames.SDK.init();
+      this.sdk = window.CrazyGames.SDK;
+      this.sdkEnv = this.sdk.environment || 'disabled';
+      try {
+        if (this.sdk.game && this.sdk.game.loadingStop) this.sdk.game.loadingStop();
+      } catch (e) { /* optional */ }
+    } catch (err) {
+      console.warn('[BITE OR BAIT] CrazyGames SDK unavailable, running standalone.', err);
+      this.sdk = null;
+      this.sdkEnv = 'none';
+    }
+    this.updateOverlayUI();
+  }
+
+  sdkReady() {
+    return !!this.sdk && (this.sdkEnv === 'crazygames' || this.sdkEnv === 'local');
+  }
+
+  isOnCrazyGames() {
+    return !!this.sdk && this.sdkEnv === 'crazygames';
+  }
+
+  sdkGameplayStart() {
+    if (!this.sdkReady() || this.sdkGameplayActive) return;
+    try {
+      this.sdk.game.gameplayStart();
+      this.sdkGameplayActive = true;
+    } catch (e) { /* ignore */ }
+  }
+
+  sdkGameplayStop() {
+    if (!this.sdkReady() || !this.sdkGameplayActive) return;
+    try {
+      this.sdk.game.gameplayStop();
+      this.sdkGameplayActive = false;
+    } catch (e) { /* ignore */ }
+  }
+
+  sdkHappyTime() {
+    if (!this.sdkReady()) return;
+    try { this.sdk.game.happytime(); } catch (e) { /* ignore */ }
+  }
+
+  muteForAd(muted) {
+    this.adPlaying = muted;
+    const se = window.soundEngine;
+    if (!se || !se.ctx) return;
+    try {
+      if (muted) se.ctx.suspend();
+      else if (!se.muted) se.ctx.resume();
+    } catch (e) { /* ignore */ }
+  }
+
+  // Shows a CrazyGames ad. type = 'rewarded' | 'midgame'.
+  // onDone(watchedSuccessfully: boolean) is ALWAYS called exactly once.
+  showAd(type, onDone) {
+    let finished = false;
+    const done = (ok) => {
+      if (finished) return;
+      finished = true;
+      this.muteForAd(false);
+      onDone(ok);
+    };
+
+    if (!this.sdkReady()) {
+      // Standalone (Cloudflare / localhost without SDK): no real ads.
+      done(type === 'rewarded');
+      return;
+    }
+
+    try {
+      this.sdkGameplayStop();
+      this.sdk.ad.requestAd(type, {
+        adStarted: () => this.muteForAd(true),
+        adFinished: () => done(true),
+        adError: (error) => {
+          console.warn('[BITE OR BAIT] Ad error:', error);
+          // Rewarded ad failed/unavailable -> no reward; midgame -> just continue
+          done(type !== 'rewarded');
+        }
+      });
+    } catch (e) {
+      done(type !== 'rewarded');
+    }
   }
 
   initBubbles() {
@@ -124,6 +231,7 @@ class BiteOrBaitGame {
       if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(code)) {
         e.preventDefault();
       }
+      if (this.adPlaying) return;
       const wasDown = this.keys[code];
       this.keys[code] = true;
       if (!wasDown) {
@@ -133,8 +241,21 @@ class BiteOrBaitGame {
 
     window.addEventListener('keyup', (e) => {
       const code = e.code;
+      if (code === 'Space') e.preventDefault(); // stop focused buttons from re-clicking
       this.keys[code] = false;
       this.onKeyRelease(code);
+    });
+
+    // Clear held keys if the tab/iframe loses focus (prevents "stuck" swimming)
+    window.addEventListener('blur', () => {
+      this.keys = {};
+      this.pointer.active = false;
+    });
+
+    // Never let a clicked button keep keyboard focus (SPACE would re-trigger it)
+    document.querySelectorAll('button').forEach((btn) => {
+      btn.addEventListener('mouseup', () => btn.blur());
+      btn.addEventListener('touchend', () => btn.blur());
     });
 
     document.getElementById('btnStartGame').addEventListener('click', () => {
@@ -162,12 +283,162 @@ class BiteOrBaitGame {
     });
 
     document.getElementById('btnAdRevive').addEventListener('click', () => {
-      this.triggerRewardedAdRevive();
+      this.requestRewardedRevive();
     });
 
     document.getElementById('btnRestart').addEventListener('click', () => {
-      this.startNewGame();
+      this.restartWithBreakAd();
     });
+
+    const shareBtn = document.getElementById('btnShareX');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', () => this.shareScoreOnX());
+    }
+  }
+
+  // Convert a pointer event into 960x600 canvas coordinates
+  toCanvasCoords(e) {
+    const rect = this.canvas.getBoundingClientRect();
+    return {
+      x: ((e.clientX - rect.left) / rect.width) * this.canvas.width,
+      y: ((e.clientY - rect.top) / rect.height) * this.canvas.height
+    };
+  }
+
+  // Touch / Mouse: press & drag on the water and the bass swims toward your finger
+  bindPointerControls() {
+    const cv = this.canvas;
+    cv.style.touchAction = 'none';
+
+    cv.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      window.soundEngine.init();
+      if (this.state.mode === 'MENU') {
+        window.soundEngine.startBGM();
+        this.startNewGame();
+        return;
+      }
+      // During emergencies, tapping the water also works as the action
+      if (this.state.mode === 'SPIT_REFLEX') {
+        this.onKeyPress('ArrowLeft');
+        return;
+      }
+      if (this.state.mode === 'GILL_WASH') {
+        this.onKeyPress('ArrowUp');
+        return;
+      }
+      const p = this.toCanvasCoords(e);
+      this.pointer = { active: true, x: p.x, y: p.y, id: e.pointerId };
+      try { cv.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+    });
+
+    cv.addEventListener('pointermove', (e) => {
+      if (!this.pointer.active || e.pointerId !== this.pointer.id) return;
+      const p = this.toCanvasCoords(e);
+      this.pointer.x = p.x;
+      this.pointer.y = p.y;
+    });
+
+    const end = (e) => {
+      if (e.pointerId !== this.pointer.id) return;
+      this.pointer.active = false;
+      this.pointer.id = null;
+    };
+    cv.addEventListener('pointerup', end);
+    cv.addEventListener('pointercancel', end);
+
+    cv.addEventListener('contextmenu', (e) => e.preventDefault());
+  }
+
+  // On-screen arcade buttons (work with mouse clicks AND touch)
+  bindArcadeDeck() {
+    const press = (id, onDown, onUp) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.touchAction = 'none';
+      el.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        window.soundEngine.init();
+        el.classList.add('pressed');
+        try { el.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+        onDown();
+      });
+      const release = () => {
+        if (!el.classList.contains('pressed')) return;
+        el.classList.remove('pressed');
+        if (onUp) onUp();
+      };
+      el.addEventListener('pointerup', release);
+      el.addEventListener('pointercancel', release);
+      el.addEventListener('lostpointercapture', release);
+    };
+
+    // SONAR (tap)
+    press('btnTouchSonar', () => this.onKeyPress('KeyZ'));
+
+    // STALK (hold = SPACE hold, release = tease if in zone)
+    press(
+      'btnTouchStalk',
+      () => {
+        if (this.state.mode === 'MENU') window.soundEngine.startBGM();
+        if (this.state.mode !== 'PLAYING') {
+          this.onKeyPress('Space');
+          return;
+        }
+        this.keys['Space'] = true;
+      },
+      () => {
+        if (this.keys['Space']) {
+          this.keys['Space'] = false;
+          this.onKeyRelease('Space');
+        }
+      }
+    );
+
+    // TEASE / SPIT (tap)
+    press('btnTouchTease', () => {
+      if (this.state.mode === 'SPIT_REFLEX') this.onKeyPress('ArrowLeft');
+      else this.onKeyPress('KeyC');
+    });
+
+    // BITE / JUMP (tap — also mashes Gill-Wash)
+    press('btnTouchBite', () => {
+      if (this.state.mode === 'GILL_WASH') this.onKeyPress('ArrowUp');
+      else this.onKeyPress('KeyX');
+    });
+  }
+
+  shareScoreOnX() {
+    const st = this.state;
+    const text =
+      `🐟 I grew a ${st.bassWeight.toFixed(1)} LBS genius bass and scored ${st.score} in BITE OR BAIT by KSK BAITS! ` +
+      `Can you tell real prey from a lure? 🎣 #BiteOrBait #KSKBAITS #BassFishing`;
+    const url = 'https://bite-or-bait.haratti2002.workers.dev/';
+    const intent = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+    window.open(intent, '_blank', 'noopener');
+  }
+
+  requestRewardedRevive() {
+    const btn = document.getElementById('btnAdRevive');
+    if (btn) btn.disabled = true;
+    this.showAd('rewarded', (ok) => {
+      if (btn) btn.disabled = false;
+      if (ok) {
+        this.triggerRewardedAdRevive();
+      } else {
+        if (btn) {
+          btn.textContent = '😢 NO AD AVAILABLE RIGHT NOW — TRY AGAIN';
+          setTimeout(() => {
+            btn.textContent = '📺 WATCH AD: MIRACLE GILL-WASH REVIVE!';
+          }, 2500);
+        }
+      }
+    });
+  }
+
+  restartWithBreakAd() {
+    // Natural break between runs = good spot for a midgame ad (not on the very first run)
+    this.showAd('midgame', () => this.startNewGame());
   }
 
   onKeyPress(code) {
@@ -293,11 +564,17 @@ class BiteOrBaitGame {
   }
 
   startNextWave() {
-    if (this.state.waveIndex + 1 < window.ANGLERS.length) {
-      this.setupWave(this.state.waveIndex + 1);
-    } else {
-      this.setupWave(0);
-    }
+    if (this.transitioning) return;
+    this.transitioning = true;
+    // Stage break = natural midgame ad slot on CrazyGames
+    this.showAd('midgame', () => {
+      this.transitioning = false;
+      if (this.state.waveIndex + 1 < window.ANGLERS.length) {
+        this.setupWave(this.state.waveIndex + 1);
+      } else {
+        this.setupWave(0);
+      }
+    });
   }
 
   spawnItem() {
@@ -565,7 +842,11 @@ class BiteOrBaitGame {
         st.mode = 'WAVE_CLEAR';
       } else {
         st.mode = 'VICTORY';
+        this.sdkHappyTime();
       }
+      // Release any held inputs so nothing carries over into the next stage
+      this.keys = {};
+      this.pointer.active = false;
       window.soundEngine.playTease(5);
       this.updateOverlayUI();
     }
@@ -614,6 +895,8 @@ class BiteOrBaitGame {
 
   update(dt) {
     const st = this.state;
+    // Freeze the whole simulation while the Dex is open or an ad is playing
+    if (this.paused || this.adPlaying) return;
     st.time += dt;
 
     if (st.screenShake > 0) {
@@ -721,6 +1004,18 @@ class BiteOrBaitGame {
     if (this.keys['ArrowUp'] || this.keys['KeyW']) ay -= 1;
     if (this.keys['ArrowDown'] || this.keys['KeyS']) ay += 1;
 
+    // Touch / mouse: swim toward the finger/cursor (analog, eases in near target)
+    if (this.pointer.active && ax === 0 && ay === 0) {
+      const dx = this.pointer.x - bass.x;
+      const dy = this.pointer.y - bass.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist > 14) {
+        const strength = Math.min(1, dist / 90);
+        ax = (dx / dist) * strength;
+        ay = (dy / dist) * strength;
+      }
+    }
+
     const feverBoost = st.combo >= 4 ? 1.2 : 1.0;
     const accel = (bass.stalking ? 460 : 940) * this.perks.speedMult * feverBoost;
     bass.vx += ax * accel * dt;
@@ -733,7 +1028,7 @@ class BiteOrBaitGame {
     bass.y += bass.vy * dt;
     bass.speed = Math.hypot(bass.vx, bass.vy);
 
-    if (Math.abs(ax) > 0) {
+    if (Math.abs(ax) > 0.15) {
       bass.facing = ax > 0 ? 1 : -1;
     }
     bass.tilt = (bass.vy / 420) * 0.35 * bass.facing;
@@ -876,12 +1171,32 @@ class BiteOrBaitGame {
       document.getElementById('endStats').textContent =
         `Final Bass Size: ${st.bassWeight.toFixed(1)} LBS  |  Score: ${st.score}  |  Max Combo: ${st.maxCombo}x  |  Dex: ${this.discoveredIds.size}/${window.ITEM_CATALOG.length}`;
       document.getElementById('btnAdRevive').style.display = isWin ? 'none' : 'inline-block';
+
+      // CrazyGames does not allow outbound links -> hide the X share button there
+      const shareBtn = document.getElementById('btnShareX');
+      if (shareBtn) shareBtn.style.display = this.isOnCrazyGames() ? 'none' : 'inline-block';
+    }
+
+    this.syncGameplayEvents();
+  }
+
+  // Tell the CrazyGames SDK whether the player is actively playing right now
+  syncGameplayEvents() {
+    const activeModes = ['PLAYING', 'SPIT_REFLEX', 'GILL_WASH'];
+    if (activeModes.includes(this.state.mode) && !this.paused && !this.adPlaying) {
+      this.sdkGameplayStart();
+    } else {
+      this.sdkGameplayStop();
     }
   }
 
   toggleDexModal(show) {
     const modal = document.getElementById('dexModal');
     modal.classList.toggle('hidden', !show);
+    this.paused = show;
+    this.keys = {};
+    this.pointer.active = false;
+    this.syncGameplayEvents();
     if (!show) return;
 
     const grid = document.getElementById('dexGrid');

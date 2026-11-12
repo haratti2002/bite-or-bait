@@ -1,3 +1,6 @@
 .git
+.gitignore
 wrangler.jsonc
 .assetsignore
+build-crazygames.sh
+dist

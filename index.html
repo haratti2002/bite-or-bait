@@ -2,9 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>KSK BAITS × BITE OR BAIT — Official Brand Game</title>
-  <link rel="stylesheet" href="style.css?v=3" />
+  <meta name="description" content="Play as a genius black bass! Tell real prey from KSK BAITS lures, tease the anglers, and grow into a lake legend. Free comic arcade game." />
+  <meta property="og:title" content="BITE OR BAIT — by KSK BAITS" />
+  <meta property="og:description" content="Can you tell real prey from a lure? Tease the anglers and grow a monster bass!" />
+  <meta property="og:image" content="https://bite-or-bait.haratti2002.workers.dev/og-cover.jpg" />
+  <meta property="og:url" content="https://bite-or-bait.haratti2002.workers.dev/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <!-- Official CrazyGames HTML5 SDK v3 -->
+  <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
+  <link rel="stylesheet" href="style.css?v=5" />
 </head>
 <body>
 
@@ -38,22 +46,22 @@
           <div class="step-box">
             <h3>1. SWIM & SCAN</h3>
             <p>
-              Use <span class="kbd-tag">↑↓←→</span> or <span class="kbd-tag">WASD</span> to orbit targets.
-              Swim <b>BELOW</b> frogs or press <span class="kbd-tag">Z</span> / <span class="kbd-tag">SHIFT</span> for <b>SONAR</b> to expose hidden hooks & heartbeats!
+              Use <span class="kbd-tag">↑↓←→</span> / <span class="kbd-tag">WASD</span> or <b>Touch/Drag</b> the water to swim.
+              Press <span class="kbd-tag">Z</span> / <span class="kbd-tag">SONAR</span> to expose hidden hooks & heartbeats!
             </p>
           </div>
           <div class="step-box">
             <h3>2. STALK & TEASE!</h3>
             <p>
-              Hold <span class="kbd-tag">SPACE</span> near a target to zoom in & inspect!
-              If it's a <b>FAKE LURE</b>, <b>RELEASE <span class="kbd-tag">SPACE</span></b> inches from the hook (or press <span class="kbd-tag">C</span>) to deal massive <b>TEASE RAGE</b>!
+              Hold <span class="kbd-tag">SPACE</span> (or <b>HOLD STALK</b> button) near a target to open the <b>4x Loupe</b>!
+              If it's a <b>KSK LURE</b>, release early (or tap <span class="kbd-tag">C</span>) to <b>TEASE!</b>
             </p>
           </div>
           <div class="step-box">
             <h3>3. BITE OR SPIT!</h3>
             <p>
-              If it's <b>REAL PREY</b>, hold <span class="kbd-tag">SPACE</span> to 100% (or press <span class="kbd-tag">X</span>) to <b>CHOMP!</b>
-              Bit plastic by mistake? Slam <span class="kbd-tag">←</span> in 0.7s to <b>SPIT IT BACK!</b>
+              If it's <b>REAL PREY</b>, hold <span class="kbd-tag">SPACE</span> to 100% (or tap <span class="kbd-tag">X</span> / <b>BITE</b>) to <b>CHOMP!</b>
+              Bit plastic by mistake? Slam <span class="kbd-tag">←</span> or <b>TEASE/SPIT</b> in 0.8s!
             </p>
           </div>
         </div>
@@ -74,13 +82,14 @@
       </div>
     </div>
 
-    <!-- 3. GAME OVER / VICTORY OVERLAY (WITH PORTAL AD-REVIVE DEMO) -->
+    <!-- 3. GAME OVER / VICTORY OVERLAY (WITH CRAZYGAMES REWARDED AD SDK) -->
     <div id="gameOverOverlay" class="comic-overlay hidden">
       <div class="comic-panel-card">
         <h2 id="endTitle" class="comic-title" style="font-size: 42px;">GAME OVER</h2>
         <p id="endStats" style="font-size: 18px; margin: 16px 0 24px;"></p>
         <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
           <button id="btnAdRevive" class="comic-btn ad-btn">📺 WATCH AD: MIRACLE GILL-WASH REVIVE!</button>
+          <button id="btnShareX" class="comic-btn" style="background:#1da1f2;color:#fff;font-size:18px;padding:12px 20px;">📲 SHARE SCORE ON X</button>
           <button id="btnRestart" class="comic-btn primary">🔄 PLAY AGAIN</button>
         </div>
       </div>
@@ -90,7 +99,7 @@
     <div id="dexModal" class="comic-overlay hidden">
       <div class="comic-panel-card">
         <div class="ksk-presents-box" style="margin-bottom: 6px;">
-          <img src="ksk-baits-logo.png" alt="KSK BAITS" class="ksk-logo-header" style="height: 34px;" />
+          <img src="ksk-baits-logo.png" alt="KSK BAITS" class="ksk-logo-header" height="34" style="height: 34px; width: auto;" />
           <span class="presents-tag">OFFICIAL CATALOG</span>
         </div>
         <h2 class="comic-title" style="font-size: 38px;">KSK BAITS & PREY DEX</h2>
@@ -103,18 +112,22 @@
     </div>
   </main>
 
-  <!-- MacBook Keyboard Quick Reference Bar -->
+  <!-- Interactive Touch / Mouse / Keyboard Arcade Deck -->
   <footer class="controls-footer">
-    <span><strong class="kbd-tag">↑ ↓ ← → / WASD</strong> Swim & Orbit Below</span>
-    <span><strong class="kbd-tag">HOLD SPACE</strong> Stalk & Inspect</span>
-    <span><strong class="kbd-tag">RELEASE SPACE / C</strong> Tease Lure!</span>
-    <span><strong class="kbd-tag">100% SPACE / X</strong> Bite Prey!</span>
-    <span><strong class="kbd-tag">Z / SHIFT</strong> Lateral Sonar</span>
+    <div class="control-hint">
+      <strong class="kbd-tag">↑↓←→ / WASD / DRAG WATER</strong> Swim
+    </div>
+    <div class="arcade-action-buttons">
+      <button id="btnTouchSonar" class="comic-btn deck-btn sonar-btn">📡 SONAR [Z]</button>
+      <button id="btnTouchStalk" class="comic-btn deck-btn stalk-btn">🔍 HOLD: STALK [SPACE]</button>
+      <button id="btnTouchTease" class="comic-btn deck-btn tease-btn">😎 TEASE / SPIT [C]</button>
+      <button id="btnTouchBite" class="comic-btn deck-btn bite-btn">🦷 BITE / JUMP [X]</button>
+    </div>
   </footer>
 
-  <script src="audio.js?v=4"></script>
-  <script src="entities.js?v=4"></script>
-  <script src="renderer.js?v=4"></script>
-  <script src="game.js?v=4"></script>
+  <script src="audio.js?v=5"></script>
+  <script src="entities.js?v=5"></script>
+  <script src="renderer.js?v=5"></script>
+  <script src="game.js?v=5"></script>
 </body>
 </html>

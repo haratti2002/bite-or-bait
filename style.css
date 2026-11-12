@@ -228,7 +228,7 @@ body {
   font-size: 12px;
 }
 
-/* Bottom MacBook Keyboard Controls Bar */
+/* Bottom MacBook Keyboard & Mobile Touch Arcade Deck */
 .controls-footer {
   width: 960px;
   max-width: 100%;
@@ -236,19 +236,184 @@ body {
   background: #ffea00;
   color: #000000;
   border: 4px solid #000000;
-  padding: 8px 16px;
+  padding: 8px 14px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   font-size: 14px;
   box-shadow: 6px 6px 0px #000000;
 }
 
-.controls-footer span {
+.control-hint {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+.arcade-action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.deck-btn {
+  padding: 6px 12px;
+  font-size: 14px;
+  touch-action: manipulation;
+}
+
+.deck-btn.sonar-btn {
+  background: #00d2d3;
+  color: #000;
+}
+
+.deck-btn.stalk-btn {
+  background: #feca57;
+  color: #000;
+}
+
+.deck-btn.tease-btn {
+  background: #00ffcc;
+  color: #000;
+}
+
+.deck-btn.bite-btn {
+  background: #ff3838;
+  color: #fff;
+}
+
+.deck-btn.pressed {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #000000;
+  filter: brightness(1.12);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+html, body {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  overscroll-behavior: none;
+}
+
+/* ============================================================================
+   RESPONSIVE: phones, tablets & small CrazyGames iframes
+   ============================================================================ */
+@media (max-width: 820px), (max-height: 640px) {
+  body {
+    padding: 4px;
+    justify-content: flex-start;
+  }
+
+  .top-toolbar {
+    margin-bottom: 4px;
+  }
+
+  .brand-badge {
+    padding: 3px 8px;
+    box-shadow: 3px 3px 0px #ffea00, 5px 5px 0px #000000;
+  }
+
+  .brand-badge span {
+    display: none;
+  }
+
+  .comic-btn {
+    font-size: 12px;
+    padding: 5px 9px;
+  }
+
+  .game-shell {
+    border-width: 4px;
+    box-shadow: 5px 5px 0px #ffea00, 8px 8px 0px #000000;
+  }
+
+  .comic-overlay {
+    padding: 8px;
+    overflow-y: auto;
+    align-items: flex-start;
+  }
+
+  .comic-panel-card {
+    padding: 12px 14px;
+    box-shadow: 6px 6px 0px #e84118, 9px 9px 0px #000000;
+  }
+
+  .comic-title {
+    font-size: 34px !important;
+    -webkit-text-stroke: 2px #000000;
+    text-shadow: 3px 3px 0px #e84118, 5px 5px 0px #000000;
+  }
+
+  .comic-subtitle {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  .ksk-logo-hero {
+    height: 34px !important;
+  }
+
+  .how-to-grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    margin: 6px 0 10px;
+  }
+
+  .step-box {
+    padding: 7px 9px;
+  }
+
+  .step-box h3 {
+    font-size: 13px;
+    margin-bottom: 3px;
+  }
+
+  .step-box p {
+    font-size: 11px;
+  }
+
+  .comic-btn.primary,
+  .comic-btn.ad-btn {
+    font-size: 15px;
+    padding: 8px 14px;
+  }
+
+  .perk-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dex-grid {
+    grid-template-columns: 1fr;
+    max-height: 220px;
+  }
+
+  .controls-footer {
+    padding: 5px;
+    margin-top: 6px;
+    box-shadow: 4px 4px 0px #000000;
+  }
+
+  .control-hint {
+    display: none;
+  }
+
+  .arcade-action-buttons {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+  }
+
+  .deck-btn {
+    font-size: 12px;
+    padding: 12px 4px;
+  }
 }
 
 /* Lure & Prey Dex Modal */
